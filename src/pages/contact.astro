@@ -1,0 +1,74 @@
+---
+import AppShell from "../components/AppShell.astro";
+import Prose from "../components/Prose.astro";
+import IconMail from "../components/icons/IconMail.astro";
+import IconGitHub from "../components/icons/IconGitHub.astro";
+import IconLinkedIn from "../components/icons/IconLinkedIn.astro";
+---
+
+<AppShell title="Contact" description="Get in touch with Adrian Tang.">
+  <Prose>
+    <h1>Contact</h1>
+
+    <p>
+      I'd love to hear from you! Whether you want to discuss a project, share an
+      idea, or just say hello, feel free to reach out through any of the
+      channels below.
+    </p>
+
+    <div class="not-prose space-y-4 my-8">
+      <a
+        href="mailto:hello@tanad.me"
+        class="flex items-center gap-4 p-4 rounded-lg border border-muted/20 hover:border-accent/30 hover:bg-accent/5 transition-all duration-200 group"
+      >
+        <IconMail
+          size={24}
+          class="text-accent group-hover:scale-110 transition-transform"
+        />
+        <div>
+          <div class="font-medium text-heading">Email</div>
+          <div class="text-sm text-muted">hello@tanad.me</div>
+        </div>
+      </a>
+
+      <a
+        href="https://github.com/adriantang"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-4 p-4 rounded-lg border border-muted/20 hover:border-accent/30 hover:bg-accent/5 transition-all duration-200 group"
+      >
+        <IconGitHub
+          size={24}
+          class="text-accent group-hover:scale-110 transition-transform"
+        />
+        <div>
+          <div class="font-medium text-heading">GitHub</div>
+          <div class="text-sm text-muted">@adriantang</div>
+        </div>
+      </a>
+
+      <a
+        href="https://linkedin.com/in/adriantang"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-4 p-4 rounded-lg border border-muted/20 hover:border-accent/30 hover:bg-accent/5 transition-all duration-200 group"
+      >
+        <IconLinkedIn
+          size={24}
+          class="text-accent group-hover:scale-110 transition-transform"
+        />
+        <div>
+          <div class="font-medium text-heading">LinkedIn</div>
+          <div class="text-sm text-muted">Adrian Tang</div>
+        </div>
+      </a>
+    </div>
+
+    <p>
+      I try to respond to all messages within a few days. If you're reaching out
+      about a project or collaboration, please include some details about what
+      you're working on and how I might be able to help.
+    </p>
+  </Prose>
+</AppShell>
+

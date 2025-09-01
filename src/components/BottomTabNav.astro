@@ -1,0 +1,140 @@
+---
+import IconHome from "./icons/IconHome.astro";
+import IconUser from "./icons/IconUser.astro";
+import IconFolder from "./icons/IconFolder.astro";
+import IconPen from "./icons/IconPen.astro";
+import IconInfo from "./icons/IconInfo.astro";
+
+const currentPath = Astro.url.pathname;
+
+const primaryTabs = [
+  { href: "/", label: "Home", icon: IconHome },
+  { href: "/projects", label: "Projects", icon: IconFolder },
+  { href: "/thoughts", label: "Thoughts", icon: IconPen },
+  { href: "/about", label: "About", icon: IconUser },
+];
+---
+
+<nav
+  aria-label="Mobile navigation"
+  class="fixed bottom-0 left-0 right-0 z-40 bg-panel/90 backdrop-blur border-t border-muted/20 md:hidden"
+  style="padding-bottom: env(safe-area-inset-bottom, 0px);"
+>
+  <div class="flex">
+    {
+      primaryTabs.map(({ href, label, icon: Icon }) => {
+        const isActive =
+          currentPath === href ||
+          (href !== "/" && currentPath.startsWith(href));
+        return (
+          <a
+            href={href}
+            class={`flex-1 flex flex-col items-center justify-center py-2 px-1 min-h-[48px] transition-colors ${
+              isActive ? "text-accent" : "text-muted hover:text-text"
+            }`}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <Icon size={20} class="mb-1" />
+            <span class="text-xs font-medium">{label}</span>
+          </a>
+        );
+      })
+    }
+    <button
+      id="more-menu-trigger"
+      class="flex-1 flex flex-col items-center justify-center py-2 px-1 min-h-[48px] text-muted hover:text-text transition-colors"
+      aria-label="More options"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="mb-1"
+      >
+        <circle cx="12" cy="12" r="1"></circle>
+        <circle cx="19" cy="12" r="1"></circle>
+        <circle cx="5" cy="12" r="1"></circle>
+      </svg>
+      <span class="text-xs font-medium">More</span>
+    </button>
+  </div>
+</nav>
+
+<!-- More Menu Sheet -->
+<div id="more-menu-sheet" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/50" id="more-menu-backdrop"></div>
+  <div
+    class="absolute bottom-0 left-0 right-0 bg-bg rounded-t-xl border-t border-muted/20 p-4"
+    style="padding-bottom: env(safe-area-inset-bottom, 1rem);"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-heading">More</h2>
+      <button
+        id="close-more-menu"
+        class="p-2 rounded-lg hover:bg-muted/10 transition-colors"
+        aria-label="Close menu"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6 6 18"></path>
+          <path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="space-y-2">
+      <a
+        href="/contact"
+        class={`flex items-center gap-3 p-3 rounded-lg transition-colors hover:bg-muted/10 ${
+          currentPath === "/contact" ? "bg-accent/10 text-accent" : "text-text"
+        }`}
+      >
+        <IconInfo size={20} />
+        <span>Contact</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const moreMenuTrigger = document.getElementById("more-menu-trigger");
+  const moreMenuSheet = document.getElementById("more-menu-sheet");
+  const moreMenuBackdrop = document.getElementById("more-menu-backdrop");
+  const closeMoreMenu = document.getElementById("close-more-menu");
+
+  function openMoreMenu() {
+    moreMenuSheet?.classList.remove("hidden");
+    moreMenuSheet?.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMoreMenuHandler() {
+    moreMenuSheet?.classList.add("hidden");
+    moreMenuSheet?.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  moreMenuTrigger?.addEventListener("click", openMoreMenu);
+  moreMenuBackdrop?.addEventListener("click", closeMoreMenuHandler);
+  closeMoreMenu?.addEventListener("click", closeMoreMenuHandler);
+
+  // Close on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !moreMenuSheet?.classList.contains("hidden")) {
+      closeMoreMenuHandler();
+    }
+  });
+</script>
+

@@ -1,0 +1,117 @@
+---
+import { getCollection } from "astro:content";
+import AppShell from "../../components/AppShell.astro";
+import Prose from "../../components/Prose.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+---
+
+<AppShell title={project.data.title} description={project.data.summary}>
+  <article>
+    <!-- Header -->
+    <header class="mb-8">
+      <div class="flex items-center gap-4 mb-4">
+        <h1 class="text-3xl md:text-4xl font-bold text-heading">
+          {project.data.title}
+        </h1>
+        <span class="text-lg text-muted font-medium">({project.data.year})</span
+        >
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 mb-6">
+        {
+          project.data.role && (
+            <>
+              <span class="text-text font-medium">{project.data.role}</span>
+              <span class="text-muted">·</span>
+            </>
+          )
+        }
+        <div class="flex flex-wrap gap-2">
+          {
+            project.data.stack.map((tech) => (
+              <span class="px-2 py-1 text-sm font-medium bg-muted/10 text-muted rounded-md">
+                {tech}
+              </span>
+            ))
+          }
+        </div>
+      </div>
+
+      <p class="text-lg text-text leading-relaxed mb-6">
+        {project.data.summary}
+      </p>
+
+      {
+        project.data.links.length > 0 && (
+          <div class="flex flex-wrap gap-4">
+            {project.data.links.map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-colors font-medium"
+              >
+                {link.label}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M7 17L17 7" />
+                  <path d="M7 7h10v10" />
+                </svg>
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <!-- Content -->
+    {
+      project.body && project.body.trim() && (
+        <Prose>
+          <Content />
+        </Prose>
+      )
+    }
+
+    <!-- Navigation -->
+    <nav class="mt-12 pt-8 border-t border-muted/20">
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-2 text-accent hover:text-heading transition-colors font-medium"
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+        Back to Projects
+      </a>
+    </nav>
+  </article>
+</AppShell>

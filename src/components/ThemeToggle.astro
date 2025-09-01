@@ -1,0 +1,41 @@
+---
+import IconSun from "./icons/IconSun.astro";
+import IconMoon from "./icons/IconMoon.astro";
+---
+
+<button
+  id="theme-toggle"
+  aria-label="Toggle theme"
+  class="fixed bottom-5 right-5 z-50 rounded-full p-3 shadow-soft bg-panel/80 backdrop-blur border border-muted/30 transition-transform hover:scale-105 focus:scale-105"
+>
+  <IconSun class="sun-icon" size={20} />
+  <IconMoon class="moon-icon hidden" size={20} />
+</button>
+
+<script>
+  const themeToggle = document.getElementById("theme-toggle");
+  const sunIcon = themeToggle?.querySelector(".sun-icon");
+  const moonIcon = themeToggle?.querySelector(".moon-icon");
+
+  function updateIcons(isDark: boolean) {
+    if (isDark) {
+      sunIcon?.classList.add("hidden");
+      moonIcon?.classList.remove("hidden");
+    } else {
+      sunIcon?.classList.remove("hidden");
+      moonIcon?.classList.add("hidden");
+    }
+  }
+
+  // Initialize icons based on current theme
+  const isDark = document.documentElement.classList.contains("dark");
+  updateIcons(isDark);
+
+  themeToggle?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const isDark = root.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    updateIcons(isDark);
+  });
+</script>
+

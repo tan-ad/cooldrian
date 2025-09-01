@@ -1,114 +1,79 @@
 ---
-import BaseHead from '@/components/BaseHead.astro';
-import Header from '@/components/Header.astro';
-import Footer from '@/components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@/consts';
-import { getCollection } from 'astro:content';
-import FormattedDate from '@/components/FormattedDate.astro';
-import { Image } from 'astro:assets';
+import { getCollection } from "astro:content";
+import AppShell from "../../components/AppShell.astro";
+import CardProject from "../../components/CardProject.astro";
 
-const posts = (await getCollection('projects')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const projects = await getCollection("projects");
+
+// Sort by year (descending) and featured status
+const sortedProjects = projects.sort((a, b) => {
+  if (a.data.featured && !b.data.featured) return -1;
+  if (!a.data.featured && b.data.featured) return 1;
+  return b.data.year - a.data.year;
+});
+
+// Group by year
+const projectsByYear = sortedProjects.reduce(
+  (acc, project) => {
+    const year = project.data.year;
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(project);
+    return acc;
+  },
+  {} as Record<number, typeof projects>
 );
+
+const years = Object.keys(projectsByYear)
+  .map(Number)
+  .sort((a, b) => b - a);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/projects/${post.slug}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
+<AppShell
+  title="Projects"
+  description="A collection of projects I've built over the years."
+>
+  <div class="mb-8">
+    <h1 class="text-3xl md:text-4xl font-bold text-heading mb-4">Projects</h1>
+    <p class="text-lg text-text leading-relaxed max-w-2xl">
+      A collection of projects I've built over the years. From small experiments
+      to larger applications, each one taught me something new and helped me
+      grow as a developer.
+    </p>
+  </div>
+
+  {
+    years.map((year) => (
+      <section class="mb-12">
+        <h2 class="text-xl font-semibold text-heading mb-6 flex items-center gap-3">
+          <span>{year}</span>
+          <div class="flex-1 h-px bg-muted/20" />
+        </h2>
+
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {projectsByYear[year].map((project) => (
+            <CardProject
+              title={project.data.title}
+              year={project.data.year}
+              summary={project.data.summary}
+              stack={project.data.stack}
+              href={
+                project.body && project.body.trim()
+                  ? `/projects/${project.slug}`
+                  : undefined
+              }
+              featured={project.data.featured}
+            />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    projects.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-muted">No projects yet. Check back soon!</p>
+      </div>
+    )
+  }
+</AppShell>

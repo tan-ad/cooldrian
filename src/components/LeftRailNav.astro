@@ -1,0 +1,69 @@
+---
+import IconHome from "./icons/IconHome.astro";
+import IconUser from "./icons/IconUser.astro";
+import IconFolder from "./icons/IconFolder.astro";
+import IconPen from "./icons/IconPen.astro";
+import IconInfo from "./icons/IconInfo.astro";
+
+const currentPath = Astro.url.pathname;
+
+const navItems = [
+  { href: "/", label: "Home", icon: IconHome },
+  { href: "/about", label: "About", icon: IconUser },
+  { href: "/projects", label: "Projects", icon: IconFolder },
+  { href: "/thoughts", label: "Thoughts", icon: IconPen },
+  { href: "/contact", label: "Contact", icon: IconInfo },
+];
+---
+
+<nav
+  aria-label="Primary navigation"
+  class="fixed top-1/2 left-5 -translate-y-1/2 z-40 rounded-cozy bg-panel/80 backdrop-blur shadow-soft border border-muted/20 transition-[width] duration-200 ease-out hover:w-52 focus-within:w-52 w-16 group hidden md:block"
+  data-state="collapsed"
+>
+  <ul class="p-2 space-y-1">
+    {
+      navItems.map(({ href, label, icon: Icon }) => {
+        const isActive =
+          currentPath === href ||
+          (href !== "/" && currentPath.startsWith(href));
+        return (
+          <li>
+            <a
+              href={href}
+              class={`relative flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-muted/10 focus:bg-muted/10 ${
+                isActive
+                  ? "bg-accent/10 text-accent"
+                  : "text-text hover:text-heading"
+              }`}
+              aria-current={isActive ? "page" : undefined}
+            >
+              <div class="w-full flex justify-center group-hover:justify-start transition-all duration-200">
+                <Icon
+                  size={20}
+                  class={`flex-shrink-0 transition-transform hover:scale-105 ${
+                    isActive ? "text-accent" : ""
+                  }`}
+                />
+              </div>
+              <span class="absolute left-14 whitespace-nowrap transition-opacity duration-200 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none">
+                {label}
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    nav {
+      transition: none;
+    }
+    nav * {
+      transition: none;
+    }
+  }
+</style>

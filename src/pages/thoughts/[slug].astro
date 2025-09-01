@@ -1,0 +1,134 @@
+---
+import { getCollection } from "astro:content";
+import AppShell from "../../components/AppShell.astro";
+import Prose from "../../components/Prose.astro";
+import PostMeta from "../../components/PostMeta.astro";
+
+export async function getStaticPaths() {
+  const thoughts = await getCollection("thoughts");
+  return thoughts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Get all posts for prev/next navigation
+const allPosts = await getCollection("thoughts");
+const publishedPosts = allPosts
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const currentIndex = publishedPosts.findIndex((p) => p.slug === post.slug);
+const prevPost =
+  currentIndex < publishedPosts.length - 1
+    ? publishedPosts[currentIndex + 1]
+    : null;
+const nextPost = currentIndex > 0 ? publishedPosts[currentIndex - 1] : null;
+---
+
+<AppShell
+  title={post.data.title}
+  description={post.data.summary ||
+    `A ${post.data.category.toLowerCase()} post by Adrian Tang`}
+>
+  <article>
+    <!-- Header -->
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-heading mb-4">
+        {post.data.title}
+      </h1>
+
+      <PostMeta date={post.data.date} category={post.data.category} />
+
+      {
+        post.data.summary && (
+          <p class="text-lg text-text leading-relaxed mt-4">
+            {post.data.summary}
+          </p>
+        )
+      }
+
+      {
+        post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mt-4">
+            {post.data.tags.map((tag) => (
+              <span class="px-2 py-1 text-sm font-medium bg-muted/10 text-muted rounded-md">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <!-- Content -->
+    <Prose>
+      <Content />
+    </Prose>
+
+    <!-- Navigation -->
+    <nav class="mt-12 pt-8 border-t border-muted/20">
+      <div class="flex flex-col sm:flex-row gap-4 justify-between">
+        <div class="flex-1">
+          {
+            prevPost && (
+              <a
+                href={`/thoughts/${prevPost.slug}`}
+                class="block p-4 rounded-lg border border-muted/20 hover:border-accent/30 hover:bg-accent/5 transition-all duration-200 group"
+              >
+                <div class="text-sm text-muted mb-1">Previous</div>
+                <div class="font-medium text-heading group-hover:text-accent transition-colors">
+                  {prevPost.data.title}
+                </div>
+              </a>
+            )
+          }
+        </div>
+
+        <div class="flex-1">
+          {
+            nextPost && (
+              <a
+                href={`/thoughts/${nextPost.slug}`}
+                class="block p-4 rounded-lg border border-muted/20 hover:border-accent/30 hover:bg-accent/5 transition-all duration-200 group text-right"
+              >
+                <div class="text-sm text-muted mb-1">Next</div>
+                <div class="font-medium text-heading group-hover:text-accent transition-colors">
+                  {nextPost.data.title}
+                </div>
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a
+          href="/thoughts"
+          class="inline-flex items-center gap-2 text-accent hover:text-heading transition-colors font-medium"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M19 12H5"></path>
+            <path d="M12 19l-7-7 7-7"></path>
+          </svg>
+          Back to Thoughts
+        </a>
+      </div>
+    </nav>
+  </article>
+</AppShell>
+
