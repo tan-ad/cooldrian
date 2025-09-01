@@ -1,6 +1,5 @@
 ---
 title: Task Tracker CLI
-year: 2024
 role: Solo Developer
 stack: [Node.js, TypeScript, Commander.js]
 summary: A simple command-line task management tool with JSON storage and intuitive commands.

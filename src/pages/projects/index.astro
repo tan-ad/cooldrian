@@ -5,27 +5,12 @@ import CardProject from "../../components/CardProject.astro";
 
 const projects = await getCollection("projects");
 
-// Sort by year (descending) and featured status
+// Sort by featured status first, then alphabetically by title
 const sortedProjects = projects.sort((a, b) => {
   if (a.data.featured && !b.data.featured) return -1;
   if (!a.data.featured && b.data.featured) return 1;
-  return b.data.year - a.data.year;
+  return a.data.title.localeCompare(b.data.title);
 });
-
-// Group by year
-const projectsByYear = sortedProjects.reduce(
-  (acc, project) => {
-    const year = project.data.year;
-    if (!acc[year]) acc[year] = [];
-    acc[year].push(project);
-    return acc;
-  },
-  {} as Record<number, typeof projects>
-);
-
-const years = Object.keys(projectsByYear)
-  .map(Number)
-  .sort((a, b) => b - a);
 ---
 
 <AppShell
@@ -35,39 +20,29 @@ const years = Object.keys(projectsByYear)
   <div class="mb-8">
     <h1 class="text-3xl md:text-4xl font-bold text-heading mb-4">Projects</h1>
     <p class="text-lg text-text leading-relaxed max-w-2xl">
-      A collection of projects I've built over the years. From small experiments
-      to larger applications, each one taught me something new and helped me
-      grow as a developer.
+      A collection of projects I've built. From small experiments to larger
+      applications, each one taught me something new and helped me grow as a
+      developer.
     </p>
   </div>
 
-  {
-    years.map((year) => (
-      <section class="mb-12">
-        <h2 class="text-xl font-semibold text-heading mb-6 flex items-center gap-3">
-          <span>{year}</span>
-          <div class="flex-1 h-px bg-muted/20" />
-        </h2>
-
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projectsByYear[year].map((project) => (
-            <CardProject
-              title={project.data.title}
-              year={project.data.year}
-              summary={project.data.summary}
-              stack={project.data.stack}
-              href={
-                project.body && project.body.trim()
-                  ? `/projects/${project.slug}`
-                  : undefined
-              }
-              featured={project.data.featured}
-            />
-          ))}
-        </div>
-      </section>
-    ))
-  }
+  <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {
+      sortedProjects.map((project) => (
+        <CardProject
+          title={project.data.title}
+          summary={project.data.summary}
+          stack={project.data.stack}
+          href={
+            project.body && project.body.trim()
+              ? `/projects/${project.slug}`
+              : undefined
+          }
+          featured={project.data.featured}
+        />
+      ))
+    }
+  </div>
 
   {
     projects.length === 0 && (

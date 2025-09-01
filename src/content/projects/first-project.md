@@ -1,6 +1,5 @@
 ---
 title: Personal Website
-year: 2025
 role: Solo Developer
 stack: [Astro, TypeScript, Tailwind CSS, MDX]
 summary: A modern, performant personal website built with Astro featuring a blog, project showcase, and dark mode support.
