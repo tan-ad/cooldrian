@@ -31,14 +31,14 @@ const navItems = [
           <li>
             <a
               href={href}
-              class={`relative flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-muted/10 focus:bg-muted/10 ${
+              class={`relative flex items-center p-3 h-12 rounded-lg transition-all duration-200 hover:bg-muted/10 focus:bg-muted/10 ${
                 isActive
                   ? "bg-accent/10 text-accent"
                   : "text-text hover:text-heading"
               }`}
               aria-current={isActive ? "page" : undefined}
             >
-              <div class="w-full flex justify-center group-hover:justify-start transition-all duration-200">
+              <div class="absolute left-3 top-1/2 -translate-y-1/2">
                 <Icon
                   size={20}
                   class={`flex-shrink-0 transition-transform hover:scale-105 ${
