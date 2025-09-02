@@ -6,7 +6,7 @@ import IconMoon from "./icons/IconMoon.astro";
 <button
   id="theme-toggle"
   aria-label="Toggle theme"
-  class="fixed bottom-5 right-5 z-50 rounded-full p-3 shadow-soft bg-panel/80 backdrop-blur border border-muted/30 transition-transform hover:scale-105 focus:scale-105"
+  class="fixed bottom-20 md:bottom-5 right-5 z-50 rounded-full p-3 shadow-soft bg-panel/80 backdrop-blur border border-muted/30 transition-transform hover:scale-105 focus:scale-105"
 >
   <IconSun class="sun-icon" size={20} />
   <IconMoon class="moon-icon hidden" size={20} />
@@ -38,4 +38,3 @@ import IconMoon from "./icons/IconMoon.astro";
     updateIcons(isDark);
   });
 </script>
-
